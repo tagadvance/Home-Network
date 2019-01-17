@@ -55,6 +55,40 @@ set servers=8.8.8.8,8.8.4.4
 add action=masquerade chain=srcnat out-interface=ether1
 ```
 
+### IPv4 Firewall
+```
+/ip firewall filter
+add action=drop chain=input comment="drop invalid" connection-state=invalid
+add action=accept chain=input comment="accept established and related" \
+    connection-state=established,related
+add action=accept chain=input comment="accept DHCP (100/sec)" in-interface=\
+    ether1 limit=100,0:packet protocol=udp src-port=547
+add action=drop chain=input comment="Drop DHCP" in-interface=ether1 protocol=\
+    udp src-port=547
+add action=accept chain=input comment="accept external ICMP (100/sec)" \
+    in-interface=ether1 limit=100,0:packet protocol=icmpv6
+add action=drop chain=input comment="drop external ICMP" in-interface=ether1 \
+    protocol=icmpv6
+add action=accept chain=input comment="accept internal ICMP" in-interface=\
+    !ether1 protocol=icmpv6
+add action=drop chain=input comment="drop external" in-interface=ether1
+add action=reject chain=input comment="reject everything else"
+add action=accept chain=output comment="accept all"
+add action=drop chain=forward comment="drop invalid" connection-state=invalid
+add action=accept chain=forward comment="accept established and related" \
+    connection-state=established,related
+add action=accept chain=forward comment="accept external ICMP (100/sec)" \
+    in-interface=ether1 limit=100,0:packet protocol=icmpv6
+add action=drop chain=forward comment="drop external ICMP" in-interface=\
+    ether1 protocol=icmpv6
+add action=accept chain=forward comment="accept internal" in-interface=\
+    !ether1
+add action=accept chain=forward comment="accept outgoing" out-interface=\
+    ether1
+add action=drop chain=forward comment="drop external" in-interface=ether1
+add action=reject chain=forward comment="reject everything else"
+```
+
 ### Miscellaneous
 ```
 /snmp community
