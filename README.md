@@ -31,11 +31,9 @@ set [ find default-name=ether1 ] comment=Internet
 /ip pool
 add name=pool-ethernet ranges=172.16.0.2-172.16.0.254
 /ip dhcp-server
-add address-pool=pool-ethernet disabled=no interface=bridge-local lease-time=\
-    1h name=dhcp-ethernet
+add address-pool=pool-ethernet disabled=no interface=bridge-local lease-time=1h name=dhcp-ethernet
 /queue simple
-add comment="https://forum.mikrotik.com/viewtopic.php\?t=101640" max-limit=\
-    100M/10M name=prevent-buffer-bloat target=ether1
+add comment="https://forum.mikrotik.com/viewtopic.php\?t=101640" max-limit=100M/10M name=prevent-buffer-bloat target=ether1
 /interface bridge port
 add bridge=bridge-local hw=no interface=ether2
 add bridge=bridge-local hw=no interface=ether3
@@ -44,11 +42,9 @@ add bridge=bridge-local hw=no interface=ether5
 /ip address
 add address=172.16.0.1/24 interface=bridge-local network=172.16.0.0
 /ip dhcp-client
-add dhcp-options=hostname,clientid disabled=no interface=ether1 use-peer-dns=\
-    no use-peer-ntp=no
+add dhcp-options=hostname,clientid disabled=no interface=ether1 use-peer-dns=no use-peer-ntp=no
 /ip dhcp-server network
-add address=172.16.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=172.16.0.1 \
-    netmask=24
+add address=172.16.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=172.16.0.1 netmask=24
 /ip dns
 set servers=8.8.8.8,8.8.4.4
 /ip firewall nat
@@ -59,32 +55,21 @@ add action=masquerade chain=srcnat out-interface=ether1
 ```
 /ip firewall filter
 add action=drop chain=input comment="drop invalid" connection-state=invalid
-add action=accept chain=input comment="accept established and related" \
-    connection-state=established,related
-add action=accept chain=input comment="accept DHCP (100/sec)" in-interface=\
-    ether1 limit=100,0:packet protocol=udp src-port=547
-add action=drop chain=input comment="Drop DHCP" in-interface=ether1 protocol=\
-    udp src-port=547
-add action=accept chain=input comment="accept external ICMP (100/sec)" \
-    in-interface=ether1 limit=100,0:packet protocol=icmpv6
-add action=drop chain=input comment="drop external ICMP" in-interface=ether1 \
-    protocol=icmpv6
-add action=accept chain=input comment="accept internal ICMP" in-interface=\
-    !ether1 protocol=icmpv6
+add action=accept chain=input comment="accept established and related" connection-state=established,related
+add action=accept chain=input comment="accept DHCP (100/sec)" in-interface=ether1 limit=100,0:packet protocol=udp src-port=547
+add action=drop chain=input comment="Drop DHCP" in-interface=ether1 protocol=udp src-port=547
+add action=accept chain=input comment="accept external ICMP (100/sec)" in-interface=ether1 limit=100,0:packet protocol=icmpv6
+add action=drop chain=input comment="drop external ICMP" in-interface=ether1 protocol=icmpv6
+add action=accept chain=input comment="accept internal ICMP" in-interface=!ether1 protocol=icmpv6
 add action=drop chain=input comment="drop external" in-interface=ether1
 add action=reject chain=input comment="reject everything else"
 add action=accept chain=output comment="accept all"
 add action=drop chain=forward comment="drop invalid" connection-state=invalid
-add action=accept chain=forward comment="accept established and related" \
-    connection-state=established,related
-add action=accept chain=forward comment="accept external ICMP (100/sec)" \
-    in-interface=ether1 limit=100,0:packet protocol=icmpv6
-add action=drop chain=forward comment="drop external ICMP" in-interface=\
-    ether1 protocol=icmpv6
-add action=accept chain=forward comment="accept internal" in-interface=\
-    !ether1
-add action=accept chain=forward comment="accept outgoing" out-interface=\
-    ether1
+add action=accept chain=forward comment="accept established and related" connection-state=established,related
+add action=accept chain=forward comment="accept external ICMP (100/sec)" in-interface=ether1 limit=100,0:packet protocol=icmpv6
+add action=drop chain=forward comment="drop external ICMP" in-interface=ether1 protocol=icmpv6
+add action=accept chain=forward comment="accept internal" in-interface=!ether1
+add action=accept chain=forward comment="accept outgoing" out-interface=ether1
 add action=drop chain=forward comment="drop external" in-interface=ether1
 add action=reject chain=forward comment="reject everything else"
 ```
@@ -105,36 +90,23 @@ set silent-boot=no
 ```
 /ipv6 firewall filter
 add action=drop chain=input comment="drop invalid" connection-state=invalid
-add action=accept chain=input comment="accept established and related" \
-    connection-state=established,related
-add action=accept chain=input comment="accept DHCP (100/sec)" in-interface=\
-    ether1 limit=100,0:packet protocol=udp src-port=547
-add action=drop chain=input comment="Drop DHCP" in-interface=ether1 protocol=\
-    udp src-port=547
-add action=accept chain=input comment="accept external ICMP (100/sec)" \
-    in-interface=ether1 limit=100,0:packet protocol=icmpv6
-add action=drop chain=input comment="drop external ICMP" in-interface=ether1 \
-    protocol=icmpv6
-add action=accept chain=input comment="accept internal ICMP" in-interface=\
-    !ether1 protocol=icmpv6
+add action=accept chain=input comment="accept established and related" connection-state=established,related
+add action=accept chain=input comment="accept DHCP (100/sec)" in-interface=ether1 limit=100,0:packet protocol=udp src-port=547
+add action=drop chain=input comment="Drop DHCP" in-interface=ether1 protocol=udp src-port=547
+add action=accept chain=input comment="accept external ICMP (100/sec)" in-interface=ether1 limit=100,0:packet protocol=icmpv6
+add action=drop chain=input comment="drop external ICMP" in-interface=ether1 protocol=icmpv6
+add action=accept chain=input comment="accept internal ICMP" in-interface=!ether1 protocol=icmpv6
 add action=drop chain=input comment="drop external" in-interface=ether1
-add action=reject chain=input comment="reject everything else" reject-with=\
-    icmp-no-route
+add action=reject chain=input comment="reject everything else" reject-with=icmp-no-route
 add action=accept chain=output comment="accept all"
 add action=drop chain=forward comment="drop invalid" connection-state=invalid
-add action=accept chain=forward comment="accept established and related" \
-    connection-state=established,related
-add action=accept chain=forward comment="accept external ICMP (100/sec)" \
-    in-interface=ether1 limit=100,0:packet protocol=icmpv6
-add action=drop chain=forward comment="drop external ICMP" in-interface=\
-    ether1 protocol=icmpv6
-add action=accept chain=forward comment="accept internal" in-interface=\
-    !ether1
-add action=accept chain=forward comment="accept outgoing" out-interface=\
-    ether1
+add action=accept chain=forward comment="accept established and related" connection-state=established,related
+add action=accept chain=forward comment="accept external ICMP (100/sec)" in-interface=ether1 limit=100,0:packet protocol=icmpv6
+add action=drop chain=forward comment="drop external ICMP" in-interface=ether1 protocol=icmpv6
+add action=accept chain=forward comment="accept internal" in-interface=!ether1
+add action=accept chain=forward comment="accept outgoing" out-interface=ether1
 add action=drop chain=forward comment="drop external" in-interface=ether1
-add action=reject chain=forward comment="reject everything else" reject-with=\
-    icmp-no-route
+add action=reject chain=forward comment="reject everything else" reject-with=icmp-no-route
 ```
 
 ### IPv6
@@ -143,8 +115,7 @@ add action=reject chain=forward comment="reject everything else" reject-with=\
 add address=::1 from-pool=ethernet-pool interface=bridge-local
 /ipv6 dhcp-client
 add add-default-route=yes comment=\
-    https://www.medo64.com/2018/03/setting-ipv6-on-mikrotik/ interface=ether1 \
-    pool-name=ethernet-pool request=prefix
+    https://www.medo64.com/2018/03/setting-ipv6-on-mikrotik/ interface=ether1 pool-name=ethernet-pool request=prefix
 ```
 
 ### Guest WiFi IPv4
@@ -156,35 +127,23 @@ add address=192.168.0.1/24 interface=vlan100-ethereal network=192.168.0.0
 /ip pool
 add name=pool-ethereal ranges=192.168.0.2-192.168.0.254
 /ip dhcp-server
-add address-pool=pool-ethereal disabled=no interface=ethereal lease-time=1h \
-    name=dhcp-ethereal
+add address-pool=pool-ethereal disabled=no interface=ethereal lease-time=1h name=dhcp-ethereal
 /ip dhcp-server network
-add address=192.168.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=192.168.0.1 \
-    netmask=24
+add address=192.168.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=192.168.0.1 netmask=24
 
 /ppp profile
 add name=privateinternetaccess-com use-encryption=required
 /interface pptp-client
-add allow=mschap2 comment="https://www.reddit.com/r/mikrotik/comments/2yb6ph/v\
-    irtual_access_points_different_dhcp_ip_ranges/cp7xdke" connect-to=\
-    us-denver.privateinternetaccess.com disabled=no mrru=1600 name=\
-    us-denver-privateinternetaccess-com password=PASSWORD profile=\
-    privateinternetaccess-com user=x0000000
+add allow=mschap2 comment="https://www.reddit.com/r/mikrotik/comments/2yb6ph/virtual_access_points_different_dhcp_ip_ranges/cp7xdke" connect-to=us-denver.privateinternetaccess.com disabled=no mrru=1600 name=us-denver-privateinternetaccess-com password=PASSWORD profile=privateinternetaccess-com user=x0000000
 
 /ip firewall filter
-add action=drop chain=forward comment="Prevent VPN IP Address Leak" \
-    out-interface=ether1 routing-mark=\
-    use-us-denver-privateinternetaccess-com
+add action=drop chain=forward comment="Prevent VPN IP Address Leak" out-interface=ether1 routing-mark=use-us-denver-privateinternetaccess-com
 /ip firewall mangle
-add action=mark-routing chain=prerouting new-routing-mark=\
-    use-us-denver-privateinternetaccess-com passthrough=yes src-address=\
-    192.168.0.0/24
+add action=mark-routing chain=prerouting new-routing-mark=use-us-denver-privateinternetaccess-com passthrough=yes src-address=192.168.0.0/24
 /ip firewall nat
-add action=masquerade chain=srcnat out-interface=\
-    us-denver-privateinternetaccess-com
+add action=masquerade chain=srcnat out-interface=us-denver-privateinternetaccess-com
 /ip route
-add distance=1 gateway=us-denver-privateinternetaccess-com routing-mark=\
-    use-us-denver-privateinternetaccess-com
+add distance=1 gateway=us-denver-privateinternetaccess-com routing-mark=use-us-denver-privateinternetaccess-com
 
 # Optionally throttle guest connections.
 /queue simple
