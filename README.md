@@ -108,3 +108,47 @@ add action=drop chain=forward comment="drop external" in-interface=ether1
 add action=reject chain=forward comment="reject everything else" reject-with=\
     icmp-no-route
 ```
+
+### Guest WiFi IPv4
+```
+/interface vlan
+add interface=ether5 name=vlan100-ethereal vlan-id=100
+/ip address
+add address=192.168.0.1/24 interface=vlan100-ethereal network=192.168.0.0
+/ip pool
+add name=pool-ethereal ranges=192.168.0.2-192.168.0.254
+/ip dhcp-server
+add address-pool=pool-ethereal disabled=no interface=ethereal lease-time=1h \
+    name=dhcp-ethereal
+/ip dhcp-server network
+add address=192.168.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=192.168.0.1 \
+    netmask=24
+
+/ppp profile
+add name=privateinternetaccess-com use-encryption=required
+/interface pptp-client
+add allow=mschap2 comment="https://www.reddit.com/r/mikrotik/comments/2yb6ph/v\
+    irtual_access_points_different_dhcp_ip_ranges/cp7xdke" connect-to=\
+    us-denver.privateinternetaccess.com disabled=no mrru=1600 name=\
+    us-denver-privateinternetaccess-com password=PASSWORD profile=\
+    privateinternetaccess-com user=x0000000
+
+/ip firewall filter
+add action=drop chain=forward comment="Prevent VPN IP Address Leak" \
+    out-interface=ether1 routing-mark=\
+    use-us-denver-privateinternetaccess-com
+/ip firewall mangle
+add action=mark-routing chain=prerouting new-routing-mark=\
+    use-us-denver-privateinternetaccess-com passthrough=yes src-address=\
+    192.168.0.0/24
+/ip firewall nat
+add action=masquerade chain=srcnat out-interface=\
+    us-denver-privateinternetaccess-com
+/ip route
+add distance=1 gateway=us-denver-privateinternetaccess-com routing-mark=\
+    use-us-denver-privateinternetaccess-com
+
+# Optionally throttle guest connections.
+/queue simple
+add max-limit=1M/8M name=ethereal-throttle target=192.168.0.0/12
+```
