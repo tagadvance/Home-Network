@@ -101,14 +101,8 @@ set enabled=yes primary-ntp=63.211.239.58 secondary-ntp=45.63.20.61
 set silent-boot=no
 ```
 
-### IPv6
+### IPv6 Firewall
 ```
-/ipv6 address
-add address=::1 from-pool=ethernet-pool interface=bridge-local
-/ipv6 dhcp-client
-add add-default-route=yes comment=\
-    https://www.medo64.com/2018/03/setting-ipv6-on-mikrotik/ interface=ether1 \
-    pool-name=ethernet-pool request=prefix
 /ipv6 firewall filter
 add action=drop chain=input comment="drop invalid" connection-state=invalid
 add action=accept chain=input comment="accept established and related" \
@@ -141,6 +135,16 @@ add action=accept chain=forward comment="accept outgoing" out-interface=\
 add action=drop chain=forward comment="drop external" in-interface=ether1
 add action=reject chain=forward comment="reject everything else" reject-with=\
     icmp-no-route
+```
+
+### IPv6
+```
+/ipv6 address
+add address=::1 from-pool=ethernet-pool interface=bridge-local
+/ipv6 dhcp-client
+add add-default-route=yes comment=\
+    https://www.medo64.com/2018/03/setting-ipv6-on-mikrotik/ interface=ether1 \
+    pool-name=ethernet-pool request=prefix
 ```
 
 ### Guest WiFi IPv4
