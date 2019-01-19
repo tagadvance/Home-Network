@@ -30,6 +30,7 @@ add fast-forward=no name=bridge-local
 set [ find default-name=ether1 ] comment=Internet
 /ip pool
 add name=pool-ethernet ranges=172.16.0.2-172.16.0.254
+add name=pool-wireless ranges=172.16.1.2-172.16.1.254
 /ip dhcp-server
 add address-pool=pool-ethernet disabled=no interface=bridge-local lease-time=1h name=dhcp-ethernet
 /queue simple
@@ -38,13 +39,15 @@ add comment="https://forum.mikrotik.com/viewtopic.php\?t=101640" max-limit=100M/
 add bridge=bridge-local hw=no interface=ether2
 add bridge=bridge-local hw=no interface=ether3
 add bridge=bridge-local hw=no interface=ether4
-add bridge=bridge-local hw=no interface=ether5
+add bridge=bridge-local disabled=yes interface=ether5
 /ip address
 add address=172.16.0.1/24 interface=bridge-local network=172.16.0.0
+add address=172.16.1.1/24 interface=ether5 network=172.16.1.0
 /ip dhcp-client
 add dhcp-options=hostname,clientid disabled=no interface=ether1 use-peer-dns=no use-peer-ntp=no
 /ip dhcp-server network
 add address=172.16.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=172.16.0.1 netmask=24
+add address=172.16.1.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=172.16.1.1 netmask=24
 /ip dns
 set servers=8.8.8.8,8.8.4.4
 /ip firewall nat
