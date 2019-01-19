@@ -26,6 +26,12 @@ To create a secure, high performance, home network with dedicated access point a
 
 ## Configuration
 
+### Security
+```
+# Disable unwanted services.
+/ip service disable ftp,ssh,telnet,www,www-ssl,api,api-ssl
+```
+
 ### IPv4
 ```
 /interface bridge
