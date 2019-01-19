@@ -28,6 +28,8 @@ To create a secure, high performance, home network with dedicated access point a
 
 ### Security
 ```
+# Use a STRONG password!
+/password
 # Disable unwanted services.
 /ip service disable ftp,ssh,telnet,www,www-ssl,api,api-ssl
 ```
