@@ -20,8 +20,9 @@ To create a secure, high performance, home network with dedicated access point a
 
 ## Network
 * Upstream will connect to router on Ether 1
-* LAN will operate on `172.16.0.0/24` over Ether 2-5
-* Guest WiFi will operate on `192.168.0.0/24` over VLAN on Ether 5 (last port)
+* LAN will operate on `172.16.0.0/24` over Ether 2-4
+* Secured Wireless will operate on `172.16.1.0/24` over Ether 5
+* Guest WiFi will operate on `192.168.0.0/24` over VLAN 100 on Ether 5 (last port)
 
 ## Configuration
 
