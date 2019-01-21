@@ -89,7 +89,7 @@ add action=drop chain=forward comment="drop external" in-interface=ether1
 add action=reject chain=forward comment="reject everything else"
 ```
 
-### Miscellaneous
+### System
 ```
 /system clock
 set time-zone-name=America/Denver
