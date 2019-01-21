@@ -91,8 +91,6 @@ add action=reject chain=forward comment="reject everything else"
 
 ### Miscellaneous
 ```
-/snmp community
-set [ find default=yes ] addresses=0.0.0.0/0
 /system clock
 set time-zone-name=America/Denver
 /system ntp client
