@@ -38,30 +38,40 @@ To create a secure, high performance, home network with dedicated access point a
 ```
 /interface bridge
 add fast-forward=no name=bridge-local
+
 /interface ethernet
 set [ find default-name=ether1 ] comment=Internet
+
 /ip pool
 add name=pool-ethernet ranges=172.16.0.2-172.16.0.254
 add name=pool-wireless ranges=172.16.1.2-172.16.1.254
+
 /ip dhcp-server
 add address-pool=pool-ethernet disabled=no interface=bridge-local lease-time=1h name=dhcp-ethernet
+
 /queue simple
 add comment="https://forum.mikrotik.com/viewtopic.php\?t=101640" max-limit=100M/10M name=prevent-buffer-bloat target=ether1
+
 /interface bridge port
 add bridge=bridge-local hw=no interface=ether2
 add bridge=bridge-local hw=no interface=ether3
 add bridge=bridge-local hw=no interface=ether4
 add bridge=bridge-local disabled=yes interface=ether5
+
 /ip address
 add address=172.16.0.1/24 interface=bridge-local network=172.16.0.0
 add address=172.16.1.1/24 interface=ether5 network=172.16.1.0
+
 /ip dhcp-client
 add dhcp-options=hostname,clientid disabled=no interface=ether1 use-peer-dns=no use-peer-ntp=no
+
 /ip dhcp-server network
 add address=172.16.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=172.16.0.1 netmask=24
 add address=172.16.1.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=172.16.1.1 netmask=24
+
 /ip dns
 set servers=8.8.8.8,8.8.4.4
+
 /ip firewall nat
 add action=masquerade chain=srcnat out-interface=ether1
 ```
@@ -93,8 +103,10 @@ add action=reject chain=forward comment="reject everything else"
 ```
 /system clock
 set time-zone-name=America/Denver
+
 /system ntp client
 set enabled=yes primary-ntp=63.211.239.58 secondary-ntp=45.63.20.61
+
 /system routerboard settings
 set silent-boot=no
 ```
@@ -126,6 +138,7 @@ add action=reject chain=forward comment="reject everything else" reject-with=icm
 ```
 /ipv6 address
 add address=::1 from-pool=ethernet-pool interface=bridge-local
+
 /ipv6 dhcp-client
 add add-default-route=yes comment=\
     https://www.medo64.com/2018/03/setting-ipv6-on-mikrotik/ interface=ether1 pool-name=ethernet-pool request=prefix
@@ -135,17 +148,22 @@ add add-default-route=yes comment=\
 ```
 /interface vlan
 add interface=ether5 name=vlan100-ethereal vlan-id=100
+
 /ip address
 add address=192.168.0.1/24 interface=vlan100-ethereal network=192.168.0.0
+
 /ip pool
 add name=pool-ethereal ranges=192.168.0.2-192.168.0.254
+
 /ip dhcp-server
 add address-pool=pool-ethereal disabled=no interface=ethereal lease-time=1h name=dhcp-ethereal
+
 /ip dhcp-server network
 add address=192.168.0.0/24 dns-server=8.8.8.8,8.8.4.4 gateway=192.168.0.1 netmask=24
 
 /ppp profile
 add name=privateinternetaccess-com use-encryption=required
+
 /interface pptp-client
 add allow=mschap2 comment="https://www.reddit.com/r/mikrotik/comments/2yb6ph/virtual_access_points_different_dhcp_ip_ranges/cp7xdke" connect-to=us-denver.privateinternetaccess.com disabled=no mrru=1600 name=us-denver-privateinternetaccess-com password=PASSWORD profile=privateinternetaccess-com user=x0000000
 
