@@ -49,9 +49,6 @@ add name=pool-wireless ranges=172.16.1.2-172.16.1.254
 /ip dhcp-server
 add address-pool=pool-ethernet disabled=no interface=bridge-local lease-time=1h name=dhcp-ethernet
 
-/queue simple
-add comment="https://forum.mikrotik.com/viewtopic.php\?t=101640" max-limit=100M/10M name=prevent-buffer-bloat target=ether1
-
 /interface bridge port
 add bridge=bridge-local hw=no interface=ether2
 add bridge=bridge-local hw=no interface=ether3
@@ -74,6 +71,13 @@ set servers=8.8.8.8,8.8.4.4
 
 /ip firewall nat
 add action=masquerade chain=srcnat out-interface=ether1
+```
+
+### IPv4 Performance
+[How I Maximized the Speed of My Non-Gigabit Internet Connection](https://medium.com/speedtest-by-ookla/engineer-maximizes-internet-speed-story-c3ec0e86f37a)
+```
+/queue simple
+add comment="https://forum.mikrotik.com/viewtopic.php\?t=101640" max-limit=100M/10M name=prevent-buffer-bloat target=ether1
 ```
 
 ### IPv4 Firewall
