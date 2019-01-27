@@ -151,16 +151,22 @@ add allow=mschap2 comment="https://www.reddit.com/r/mikrotik/comments/2yb6ph/vir
 
 /ip firewall filter
 add action=drop chain=forward comment="Prevent VPN IP Address Leak" out-interface=ether1 routing-mark=use-us-denver-privateinternetaccess-com
-add action=accept chain=forward comment="Ethereal Wireless Isolation TEST ME" dst-address=192.168.0.1 src-address=192.168.0.0/16
-add action=drop chain=forward comment="Ethereal Wireless Isolation TEST ME" dst-address=!198.168.0.1 src-address=198.168.0.0/16
+# Explicitly allow ping, DNS, NTP, HTTP, and HTTPS. Deny everything else, e.g. torrent.
+add action=accept chain=forward comment="Ethereal Ping" protocol=icmp src-address=192.168.0.0/16
+add action=accept chain=forward comment="Ethereal DNS and NTP" dst-port=53,123 protocol=udp src-address=192.168.0.0/16
+add action=accept chain=forward comment="Ethereal Web" dst-port=80,443 protocol=tcp src-address=192.168.0.0/16
+add action=drop chain=forward comment="Ethereal Egress" log=yes log-prefix="Ethereal Egress" src-address=192.168.0.0/16
+
 /ip firewall mangle
 add action=mark-routing chain=prerouting new-routing-mark=use-us-denver-privateinternetaccess-com passthrough=yes src-address=192.168.0.0/24
+
 /ip firewall nat
 add action=masquerade chain=srcnat out-interface=us-denver-privateinternetaccess-com
+
 /ip route
 add distance=1 gateway=us-denver-privateinternetaccess-com routing-mark=use-us-denver-privateinternetaccess-com
 
 # Optionally throttle guest connections.
 /queue simple
-add max-limit=1M/8M name=ethereal-throttle target=192.168.0.0/12
+add max-limit=1M/8M name=ethereal-throttle target=192.168.0.0/16
 ```
