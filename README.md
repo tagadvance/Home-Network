@@ -1,7 +1,7 @@
 # Home Network
 
 ## Comments
-Originally I had planned on having my wired and wireless networks on the same subnet. The problem was that with `ether5` bridged, IPv6 addresses were leaking to my guest wireless network. My solution was to unbridge `ether5` and move my wireless network to a different subnet (`172.16.1.0/24`). This has the added benefit of preventing my guest network from communicating with my wired and wireless networks. Finally, I added some firewall rules to prevent guest clients from communicating with each other; however, it remains untested as I lack a second ping capable wireless device.
+Originally I had planned on having my wired and wireless networks on the same subnet. The problem was that with `ether5` bridged, IPv6 addresses were leaking to my guest wireless network. My solution was to unbridge `ether5` and move my wireless network to a different subnet (`172.16.1.0/24`). Finally, I added some firewall rules to allow guest clients to _only_ access HTTP/S.
 
 ## Goal
 To create a secure, high performance, home network with dedicated access point and protected guest WiFi.
